@@ -19,48 +19,46 @@ Fields are organized by where they appear in the .nessus XML structure. The **SQ
 
 Extracted from `ReportHost > HostProperties > tag[@name]` elements. One set of values per scanned host.
 
-| Field | SQL Type | Description |
-|-------|----------|-------------|
-| **host_ip** | VARCHAR(200) | Primary IPv4/IPv6 address of the scanned asset. |
-| **mac_address** | NVARCHAR(MAX) | MAC address(es) discovered for the host. Multiple addresses are comma-separated. |
-| **virtual_mac_address** | NVARCHAR(1000) | MAC address of virtual adapter reported by virtualized hosts. |
-| **hostname** | VARCHAR(100) | NetBIOS/short hostname gathered from the host (SMB, SSH, etc.). |
-| **netbios_name** | VARCHAR(100) | NetBIOS host name obtained via SMB enumeration. |
-| **host_fqdn** | VARCHAR(150) | Fully-qualified domain name of the target host, if resolved. |
-| **host_rdns** | VARCHAR(150) | Reverse DNS lookup result for host_ip. |
-| **system_type** | VARCHAR(25) | Asset role discovered (server, workstation, router, etc.). |
-| **cpe** | VARCHAR(1000) | Host-level Common Platform Enumeration string(s) describing the platform. |
-| **operating_system_id** | VARCHAR(150) | OS identifier string from the Tenable feed. |
-| **operating_system** | VARCHAR(200) | OS string determined by local checks, banners, or fingerprinting. |
-| **operating_system_conf** | VARCHAR(150) | Confidence level for operating system identification. |
-| **operating_system_method** | VARCHAR(150) | Detection method used (local_checks, ssh_fingerprint, banner). |
-| **os_identification** | VARCHAR(150) | Aggregated text summary of OS fingerprint information. |
-| **sinfp_signature** | VARCHAR(250) | Signature string from SINFP TCP/IP stack fingerprint plugin. |
-| **Credentialed_Scan** | VARCHAR(15) | Whether host assessment was performed with valid credentials (true/false). |
-| **LastAuthenticatedResults** | VARCHAR(50) | Whether last credentialed attempt on the host succeeded (true/false). |
-| **local_checks_proto** | VARCHAR(15) | Protocol used for local checks (SMB, SSH, WMI). |
-| **smb_login_used** | VARCHAR(150) | Username that successfully authenticated for SMB local checks. |
-| **wmi_domain** | VARCHAR(150) | Windows domain name used for WMI credentialed checks. |
-| **policy_used** | VARCHAR(150) | Name of the scan policy/template executed. |
-| **patch_summary_total_cves** | VARCHAR(150) | Number of CVEs addressed by patches (from patch summary plugins). |
-| **host_start** | VARCHAR(150) | Human-readable timestamp when scanning of the host began. |
-| **host_start_timestamp** | INT | Unix epoch (seconds) of host_start. |
-| **host_end** | VARCHAR(150) | Human-readable timestamp when scanning of the host finished. |
-| **host_end_timestamp** | INT | Unix epoch (seconds) of host_end. |
+| Field | XML name | SQL Type | Description |
+|-------|----------|----------|-------------|
+| **host_ip** | `host-ip` | VARCHAR(200) | Primary IPv4/IPv6 address of the scanned asset. |
+| **mac_address** | `mac-address` | NVARCHAR(MAX) | MAC address(es) discovered for the host. Multiple addresses are comma-separated. |
+| **virtual_mac_address** | `virtual-mac-address` | NVARCHAR(1000) | MAC address of virtual adapter reported by virtualized hosts. |
+| **hostname** | `hostname` | VARCHAR(100) | NetBIOS/short hostname gathered from the host (SMB, SSH, etc.). |
+| **netbios_name** | `netbios-name` | VARCHAR(100) | NetBIOS host name obtained via SMB enumeration. |
+| **host_fqdn** | `host-fqdn` | VARCHAR(150) | Fully-qualified domain name of the target host, if resolved. |
+| **host_rdns** | `host-rdns` | VARCHAR(150) | Reverse DNS lookup result for host_ip. |
+| **system_type** | `system-type` | VARCHAR(25) | Asset role discovered (server, workstation, router, etc.). |
+| **operating_system_id** | `os` | VARCHAR(150) | OS identifier string from the Tenable feed. |
+| **operating_system** | `operating-system` | VARCHAR(200) | OS string determined by local checks, banners, or fingerprinting. |
+| **operating_system_conf** | `operating-system-conf` | VARCHAR(150) | Confidence level for operating system identification. |
+| **operating_system_method** | `operating-system-method` | VARCHAR(150) | Detection method used (local_checks, ssh_fingerprint, banner). |
+| **sinfp_signature** | `sinfp-signature` | VARCHAR(250) | Signature string from SINFP TCP/IP stack fingerprint plugin. |
+| **Credentialed_Scan** | `Credentialed_Scan` | VARCHAR(15) | Whether host assessment was performed with valid credentials (true/false). |
+| **LastAuthenticatedResults** | `LastAuthenticatedResults` | VARCHAR(50) | Whether last credentialed attempt on the host succeeded (true/false). |
+| **local_checks_proto** | `local-checks-proto` | VARCHAR(15) | Protocol used for local checks (SMB, SSH, WMI). |
+| **smb_login_used** | `smb-login-used` | VARCHAR(150) | Username that successfully authenticated for SMB local checks. |
+| **wmi_domain** | `wmi-domain` | VARCHAR(150) | Windows domain name used for WMI credentialed checks. |
+| **policy_used** | `policy-used` | VARCHAR(150) | Name of the scan policy/template executed. |
+| **patch_summary_total_cves** | `patch-summary-total-cves` | VARCHAR(150) | Number of CVEs addressed by patches (from patch summary plugins). |
+| **host_start** | `HOST_START` | VARCHAR(150) | Human-readable timestamp when scanning of the host began. |
+| **host_start_timestamp** | `HOST_START_TIMESTAMP` | INT | Unix epoch (seconds) of host_start. |
+| **host_end** | `HOST_END` | VARCHAR(150) | Human-readable timestamp when scanning of the host finished. |
+| **host_end_timestamp** | `HOST_END_TIMESTAMP` | INT | Unix epoch (seconds) of host_end. |
 
 ### Report Item Attributes
 
 Extracted from `ReportItem` XML attributes. Present on every finding.
 
-| Field | SQL Type | Description |
-|-------|----------|-------------|
-| **pluginID** | INT | Numeric identifier of the Nessus plugin. |
-| **pluginName** | VARCHAR(MAX) | Human-readable name/title of the plugin. |
-| **pluginFamily** | VARCHAR(150) | Plugin family category (e.g., Windows, Databases, CGI). |
-| **port** | INT | Network port associated with the finding (0 for host-level issues). |
-| **protocol** | VARCHAR(15) | Transport protocol (tcp, udp, icmp). |
-| **svc_name** | VARCHAR(150) | Service name associated with the open port (from nmap-services). |
-| **severity** | INT | Raw Nessus severity value (0-4). Not stored directly; used to compute severity_rating and severity_reversed. |
+| Field | XML name | SQL Type | Description |
+|-------|----------|----------|-------------|
+| **pluginID** | `pluginID` | INT | Numeric identifier of the Nessus plugin. |
+| **pluginName** | `pluginName` | VARCHAR(MAX) | Human-readable name/title of the plugin. |
+| **pluginFamily** | `pluginFamily` | VARCHAR(150) | Plugin family category (e.g., Windows, Databases, CGI). |
+| **port** | `port` | INT | Network port associated with the finding (0 for host-level issues). |
+| **protocol** | `protocol` | VARCHAR(15) | Transport protocol (tcp, udp, icmp). |
+| **svc_name** | `svc_name` | VARCHAR(150) | Service name associated with the open port (from nmap-services). |
+| **severity** | `severity` | INT | Raw Nessus severity value (0-4). Not stored directly; used to compute severity_rating and severity_reversed. |
 
 ### Report Item Child Elements
 
@@ -68,126 +66,126 @@ Extracted from child elements within each `ReportItem`. Most are optional and ma
 
 #### Vulnerability Details
 
-| Field | SQL Type | Description |
-|-------|----------|-------------|
-| **synopsis** | VARCHAR(255) | One-sentence summary of the issue. |
-| **description** | VARCHAR(MAX) | Full textual description of the vulnerability or plugin purpose. |
-| **solution** | VARCHAR(MAX) | Vendor or Tenable remediation guidance. |
-| **risk_factor** | VARCHAR(15) | Severity string (None, Low, Medium, High, Critical) from CVSS or Tenable override. |
-| **plugin_output** | VARCHAR(MAX) | Verbose per-host output returned by the plugin (evidence, banners, file lists). |
-| **plugin_type** | VARCHAR(15) | Plugin category: remote, local, compliance, patch-management. |
-| **plugin_publication_date** | DATE | Date Tenable originally published the plugin. |
-| **plugin_modification_date** | DATE | Date Tenable last modified the plugin in the feed. |
-| **script_version** | VARCHAR(150) | Revision string of the plugin script. |
-| **see_also** | VARCHAR(MAX) | URLs or document references for additional advisories or guides. |
-| **age_of_vuln** | VARCHAR(100) | Days between original disclosure date and scan time. VPR key driver. |
+| Field | XML name | SQL Type | Description |
+|-------|----------|----------|-------------|
+| **synopsis** | `synopsis` | VARCHAR(255) | One-sentence summary of the issue. |
+| **description** | `description` | VARCHAR(MAX) | Full textual description of the vulnerability or plugin purpose. |
+| **solution** | `solution` | VARCHAR(MAX) | Vendor or Tenable remediation guidance. |
+| **risk_factor** | `risk_factor` | VARCHAR(15) | Severity string (None, Low, Medium, High, Critical) from CVSS or Tenable override. |
+| **plugin_output** | `plugin_output` | VARCHAR(MAX) | Verbose per-host output returned by the plugin (evidence, banners, file lists). |
+| **plugin_type** | `plugin_type` | VARCHAR(15) | Plugin category: remote, local, compliance, patch-management. |
+| **plugin_publication_date** | `plugin_publication_date` | DATE | Date Tenable originally published the plugin. |
+| **plugin_modification_date** | `plugin_modification_date` | DATE | Date Tenable last modified the plugin in the feed. |
+| **script_version** | `script_version` | VARCHAR(150) | Revision string of the plugin script. |
+| **see_also** | `see_also` | VARCHAR(MAX) | URLs or document references for additional advisories or guides. |
+| **age_of_vuln** | `age_of_vuln` | VARCHAR(100) | Days between original disclosure date and scan time. VPR key driver. |
 
 #### CVSS v2 Scores
 
-| Field | SQL Type | Description |
-|-------|----------|-------------|
-| **cvss_base_score** | VARCHAR(100) | NVD CVSS v2 Base Score (0.0-10.0). |
-| **cvss_vector** | VARCHAR(150) | Complete CVSS v2 Base vector string (e.g., `AV:N/AC:L/...`). |
-| **cvss_score_rationale** | VARCHAR(500) | Free-text explanation of Tenable's CVSS override, if applied. |
-| **cvss_score_source** | VARCHAR(100) | Origin of the CVSS v2 score: NVD, Vendor, or Tenable. |
-| **cvss_temporal_score** | VARCHAR(100) | CVSS v2 Temporal Score computed by Tenable. |
-| **cvss_temporal_vector** | VARCHAR(100) | Vector string for CVSS v2 Temporal metrics. |
+| Field | XML name | SQL Type | Description |
+|-------|----------|----------|-------------|
+| **cvss_base_score** | `cvss_base_score` | VARCHAR(100) | NVD CVSS v2 Base Score (0.0-10.0). |
+| **cvss_vector** | `cvss_vector` | VARCHAR(150) | Complete CVSS v2 Base vector string (e.g., `AV:N/AC:L/...`). |
+| **cvss_score_rationale** | `cvss_score_rationale` | VARCHAR(500) | Free-text explanation of Tenable's CVSS override, if applied. |
+| **cvss_score_source** | `cvss_score_source` | VARCHAR(100) | Origin of the CVSS v2 score: NVD, Vendor, or Tenable. |
+| **cvss_temporal_score** | `cvss_temporal_score` | VARCHAR(100) | CVSS v2 Temporal Score computed by Tenable. |
+| **cvss_temporal_vector** | `cvss_temporal_vector` | VARCHAR(100) | Vector string for CVSS v2 Temporal metrics. |
 
 #### CVSS v3 Scores
 
-| Field | SQL Type | Description |
-|-------|----------|-------------|
-| **cvss3_base_score** | VARCHAR(100) | NVD CVSS v3.x Base Score. |
-| **cvss3_vector** | VARCHAR(150) | CVSS v3.x Base vector string. |
-| **cvss3_score_source** | VARCHAR(100) | Origin of the CVSS v3 score. |
-| **cvss3_temporal_score** | VARCHAR(100) | Tenable-calculated CVSS v3.x Temporal Score. |
-| **cvss3_temporal_vector** | VARCHAR(100) | Vector string for v3 Temporal metrics. |
-| **cvssV3_impactScore** | VARCHAR(100) | CVSS v3.x Impact sub-score from NVD. |
-| **vpr_score** | VARCHAR(100) | Tenable Vulnerability Priority Rating (0.0-10.0) combining CVSS and threat intel. |
+| Field | XML name | SQL Type | Description |
+|-------|----------|----------|-------------|
+| **cvss3_base_score** | `cvss3_base_score` | VARCHAR(100) | NVD CVSS v3.x Base Score. |
+| **cvss3_vector** | `cvss3_vector` | VARCHAR(150) | CVSS v3.x Base vector string. |
+| **cvss3_score_source** | `cvss3_score_source` | VARCHAR(100) | Origin of the CVSS v3 score. |
+| **cvss3_temporal_score** | `cvss3_temporal_score` | VARCHAR(100) | Tenable-calculated CVSS v3.x Temporal Score. |
+| **cvss3_temporal_vector** | `cvss3_temporal_vector` | VARCHAR(100) | Vector string for v3 Temporal metrics. |
+| **cvssV3_impactScore** | `cvssV3_impactScore` | VARCHAR(100) | CVSS v3.x Impact sub-score from NVD. |
+| **vpr_score** | `vpr_score` | VARCHAR(100) | Tenable Vulnerability Priority Rating (0.0-10.0) combining CVSS and threat intel. |
 
 #### CVE and Security References
 
-| Field | SQL Type | Description |
-|-------|----------|-------------|
-| **cve** | NVARCHAR(4000) | CVE identifier(s) tied to the plugin. Multiple CVEs are comma-separated. |
-| **cwe** | VARCHAR(150) | Common Weakness Enumeration ID(s) (e.g., CWE-79). |
-| **bid** | VARCHAR(150) | SecurityFocus BugTraq identifier(s). |
-| **edb_id** | VARCHAR(150) | Exploit-DB reference number(s). |
-| **cea_id** | VARCHAR(150) | CERT/CC Vulnerability Note or CISA KEV catalogue identifier. |
-| **cert** | VARCHAR(150) | CERT vulnerability note number(s) (e.g., VU#12345). |
-| **cisa_known_exploited** | VARCHAR(150) | Whether CVE is in CISA's Known Exploited Vulnerabilities catalogue (true/false). |
-| **cisa_ncas** | VARCHAR(150) | CISA National Cyber Awareness System advisory reference. |
-| **cisco_bug_id** | VARCHAR(150) | Cisco PSIRT bug ID(s) (e.g., CSCvx12345). |
-| **cisco_sa** | VARCHAR(150) | Cisco Security Advisory ID. |
-| **iava** | VARCHAR(150) | DISA Information Assurance Vulnerability Alert ID. |
-| **iavb** | VARCHAR(150) | DISA Information Assurance Vulnerability Bulletin ID. |
-| **iavt** | VARCHAR(150) | DISA Information Assurance Technical Advisory ID. |
-| **icsa** | VARCHAR(150) | ICS-CERT advisory identifier (OT/ICS devices). |
-| **msft** | VARCHAR(150) | Microsoft Security Advisory reference (MSFT-YYYY-NN). |
-| **mskb** | VARCHAR(150) | Microsoft Knowledge Base article number. |
-| **tra** | VARCHAR(150) | Tenable Research Advisory reference. |
-| **vmsa** | VARCHAR(150) | VMware Security Advisory ID(s). |
-| **secunia** | VARCHAR(150) | Secunia advisory reference number. |
-| **stig_severity** | VARCHAR(100) | DISA STIG severity mapping (Cat I/II/III). |
+| Field | XML name | SQL Type | Description |
+|-------|----------|----------|-------------|
+| **cve** | `cve` | NVARCHAR(4000) | CVE identifier(s) tied to the plugin. Multiple CVEs are comma-separated. |
+| **cwe** | `cwe` | VARCHAR(150) | Common Weakness Enumeration ID(s) (e.g., CWE-79). |
+| **bid** | `bid` | VARCHAR(150) | SecurityFocus BugTraq identifier(s). |
+| **edb_id** | `edb-id` | VARCHAR(150) | Exploit-DB reference number(s). |
+| **cea_id** | `cea-id` | VARCHAR(150) | CERT/CC Vulnerability Note or CISA KEV catalogue identifier. |
+| **cert** | `cert` | VARCHAR(150) | CERT vulnerability note number(s) (e.g., VU#12345). |
+| **cisa_known_exploited** | `cisa-known-exploited` | VARCHAR(150) | Whether CVE is in CISA's Known Exploited Vulnerabilities catalogue (true/false). |
+| **cisa_ncas** | `cisa-ncas` | VARCHAR(150) | CISA National Cyber Awareness System advisory reference. |
+| **cisco_bug_id** | `cisco-bug-id` | VARCHAR(150) | Cisco PSIRT bug ID(s) (e.g., CSCvx12345). |
+| **cisco_sa** | `cisco-sa` | VARCHAR(150) | Cisco Security Advisory ID. |
+| **iava** | `iava` | VARCHAR(150) | DISA Information Assurance Vulnerability Alert ID. |
+| **iavb** | `iavb` | VARCHAR(150) | DISA Information Assurance Vulnerability Bulletin ID. |
+| **iavt** | `iavt` | VARCHAR(150) | DISA Information Assurance Technical Advisory ID. |
+| **icsa** | `icsa` | VARCHAR(150) | ICS-CERT advisory identifier (OT/ICS devices). |
+| **msft** | `msft` | VARCHAR(150) | Microsoft Security Advisory reference (MSFT-YYYY-NN). |
+| **mskb** | `mskb` | VARCHAR(150) | Microsoft Knowledge Base article number. |
+| **tra** | `tra` | VARCHAR(150) | Tenable Research Advisory reference. |
+| **vmsa** | `vmsa` | VARCHAR(150) | VMware Security Advisory ID(s). |
+| **secunia** | `secunia` | VARCHAR(150) | Secunia advisory reference number. |
+| **stig_severity** | `stig_severity` | VARCHAR(100) | DISA STIG severity mapping (Cat I/II/III). |
 
 #### Exploit Intelligence
 
-| Field | SQL Type | Description |
-|-------|----------|-------------|
-| **exploit_available** | VARCHAR(15) | Whether public exploit code is available (true/false). |
-| **exploitability_ease** | VARCHAR(150) | Qualitative rating: No Known, Theoretical, PoC, Functional, High. |
-| **exploit_code_maturity** | VARCHAR(150) | VPR driver category: Unchecked, PoC, Functional, High. |
-| **exploit_framework_canvas** | VARCHAR(15) | Exploit present in Immunity Canvas (true/false). |
-| **canvas_package** | VARCHAR(150) | Name of the Canvas exploit module. |
-| **exploit_framework_core** | VARCHAR(15) | Exploit present in Core Impact (true/false). |
-| **exploit_framework_metasploit** | VARCHAR(15) | Exploit present in Metasploit Framework (true/false). |
-| **metasploit_name** | VARCHAR(150) | Name of the associated Metasploit module(s). |
-| **exploited_by_malware** | VARCHAR(15) | Whether vulnerability is exploited in active malware (true/false). |
-| **exploited_by_nessus** | VARCHAR(15) | Nessus itself can exploit this issue for more info (true/false). |
-| **in_the_news** | VARCHAR(15) | Tenable threat-intel flag for recent mainstream media coverage (true/false). |
+| Field | XML name | SQL Type | Description |
+|-------|----------|----------|-------------|
+| **exploit_available** | `exploit_available` | VARCHAR(15) | Whether public exploit code is available (true/false). |
+| **exploitability_ease** | `exploitability_ease` | VARCHAR(150) | Qualitative rating: No Known, Theoretical, PoC, Functional, High. |
+| **exploit_code_maturity** | `exploit_code_maturity` | VARCHAR(150) | VPR driver category: Unchecked, PoC, Functional, High. |
+| **exploit_framework_canvas** | `exploit_framework_canvas` | VARCHAR(15) | Exploit present in Immunity Canvas (true/false). |
+| **canvas_package** | `canvas_package` | VARCHAR(150) | Name of the Canvas exploit module. |
+| **exploit_framework_core** | `exploit_framework_core` | VARCHAR(15) | Exploit present in Core Impact (true/false). |
+| **exploit_framework_metasploit** | `exploit_framework_metasploit` | VARCHAR(15) | Exploit present in Metasploit Framework (true/false). |
+| **metasploit_name** | `metasploit_name` | VARCHAR(150) | Name of the associated Metasploit module(s). |
+| **exploited_by_malware** | `exploited_by_malware` | VARCHAR(15) | Whether vulnerability is exploited in active malware (true/false). |
+| **exploited_by_nessus** | `exploited_by_nessus` | VARCHAR(15) | Nessus itself can exploit this issue for more info (true/false). |
+| **in_the_news** | `in_the_news` | VARCHAR(15) | Tenable threat-intel flag for recent mainstream media coverage (true/false). |
 
 #### Threat Metrics
 
-| Field | SQL Type | Description |
-|-------|----------|-------------|
-| **threat_recency** | VARCHAR(150) | Ordinal bucket of how recently exploits were observed (Very Recent, Recent, etc.). |
-| **threat_intensity_last_28** | VARCHAR(150) | Aggregate metric (0-100) of exploit activity in last 28 days. |
-| **threat_sources_last_28** | VARCHAR(150) | Count of discrete threat sources (exploit kits, campaigns) in last 28 days. |
-| **product_coverage** | VARCHAR(150) | Percentage of vendor-known vulnerable products covered by patches. VPR driver. |
-| **unsupported_by_vendor** | VARCHAR(15) | Product is end-of-life and no longer receives patches (true/false). |
+| Field | XML name | SQL Type | Description |
+|-------|----------|----------|-------------|
+| **threat_recency** | `threat_recency` | VARCHAR(150) | Ordinal bucket of how recently exploits were observed (Very Recent, Recent, etc.). |
+| **threat_intensity_last_28** | `threat_intensity_last_28` | VARCHAR(150) | Aggregate metric (0-100) of exploit activity in last 28 days. |
+| **threat_sources_last_28** | `threat_sources_last_28` | VARCHAR(150) | Count of discrete threat sources (exploit kits, campaigns) in last 28 days. |
+| **product_coverage** | `product_coverage` | VARCHAR(150) | Percentage of vendor-known vulnerable products covered by patches. VPR driver. |
+| **unsupported_by_vendor** | `unsupported_by_vendor` | VARCHAR(15) | Product is end-of-life and no longer receives patches (true/false). |
 
 #### Asset and Inventory
 
-| Field | SQL Type | Description |
-|-------|----------|-------------|
-| **cpe** | VARCHAR(1000) | Item-level Common Platform Enumeration string for the affected product. |
-| **agent** | VARCHAR(150) | UUID or hostname of the Nessus Agent that performed the scan. |
-| **always_run** | VARCHAR(150) | Plugin runs on every scan regardless of credential/port status (true/false). |
-| **asset_inventory** | VARCHAR(150) | Plugin purpose is inventory enumeration, not vulnerability detection (true/false). |
-| **asset_inventory_category** | VARCHAR(150) | Class of inventory info: Software, Hardware, Service. |
-| **asset_categories** | VARCHAR(150) | Tenable-defined business/technical categories (e.g., Server, Workstation). |
-| **hardware_inventory** | VARCHAR(150) | Result pertains to hardware identification (true/false). |
-| **generated_plugin** | VARCHAR(150) | Plugin is auto-generated from feed data, not hand-authored (true/false). |
-| **thorough_tests** | VARCHAR(150) | Whether "Enable thorough tests" was on (true/false). |
-| **os_identification** | VARCHAR(150) | OS fingerprint information from item-level detection. |
+| Field | XML name | SQL Type | Description |
+|-------|----------|----------|-------------|
+| **cpe** | `cpe` | VARCHAR(1000) | Item-level Common Platform Enumeration string for the affected product. |
+| **agent** | `agent` | VARCHAR(150) | UUID or hostname of the Nessus Agent that performed the scan. |
+| **always_run** | `always_run` | VARCHAR(150) | Plugin runs on every scan regardless of credential/port status (true/false). |
+| **asset_inventory** | `asset_inventory` | VARCHAR(150) | Plugin purpose is inventory enumeration, not vulnerability detection (true/false). |
+| **asset_inventory_category** | `asset_inventory_category` | VARCHAR(150) | Class of inventory info: Software, Hardware, Service. |
+| **asset_categories** | `asset_categories` | VARCHAR(150) | Tenable-defined business/technical categories (e.g., Server, Workstation). |
+| **hardware_inventory** | `hardware_inventory` | VARCHAR(150) | Result pertains to hardware identification (true/false). |
+| **generated_plugin** | `generated_plugin` | VARCHAR(150) | Plugin is auto-generated from feed data, not hand-authored (true/false). |
+| **thorough_tests** | `thorough_tests` | VARCHAR(150) | Whether "Enable thorough tests" was on (true/false). |
+| **os_identification** | `os_identification` | VARCHAR(150) | OS fingerprint information from item-level detection. |
 
 #### Dates
 
-| Field | SQL Type | Description |
-|-------|----------|-------------|
-| **patch_publication_date** | DATE | Date vendor released the official patch. |
-| **vuln_publication_date** | DATE | Original public disclosure date of the vulnerability. |
+| Field | XML name | SQL Type | Description |
+|-------|----------|----------|-------------|
+| **patch_publication_date** | `patch_publication_date` | DATE | Date vendor released the official patch. |
+| **vuln_publication_date** | `vuln_publication_date` | DATE | Original public disclosure date of the vulnerability. |
 
 ### Derived/Computed Fields
 
 These fields are computed during extraction and do not exist directly in the .nessus XML.
 
-| Field | SQL Type | Description |
-|-------|----------|-------------|
-| **severity_rating** | VARCHAR(15) | Human-readable severity: Critical, High, Medium, Low, Informational. Computed from raw `severity` attribute. |
-| **severity_reversed** | INT | Inverted severity (0=Critical, 4=Informational). Useful for ascending sort by severity. |
-| **scan_date** | DATE | Date extracted from `host_start` timestamp (YYYY-MM-DD). |
-| **file_name** | VARCHAR(255) | Basename of the source .nessus file. Added during extraction for traceability. |
+| Field | XML name | SQL Type | Description |
+|-------|----------|----------|-------------|
+| **severity_rating** | (computed) | VARCHAR(15) | Human-readable severity: Critical, High, Medium, Low, Informational. Computed from raw `severity` attribute. |
+| **severity_reversed** | (computed) | INT | Inverted severity (0=Critical, 4=Informational). Useful for ascending sort by severity. |
+| **scan_date** | (computed) | DATE | Date extracted from `host_start` timestamp (YYYY-MM-DD). |
+| **file_name** | (computed) | VARCHAR(255) | Basename of the source .nessus file. Added during extraction for traceability. |
 
 ### Additional .nessus Fields (Not Extracted by Scripts)
 
