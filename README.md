@@ -13,7 +13,7 @@ A data dictionary for the **.nessus XML** scan export format. Documents every ex
 
 ## Field Reference
 
-Fields are organized by where they appear in the .nessus XML structure. The **SQL Type** column matches the schema used by the companion [Tenable_Nessus_Scripts](https://github.com/NullSpace-BitCradle/Tenable_Nessus_Scripts) SQL import script.
+Fields are organized by where they appear in the .nessus XML structure. The **XML name** column is the tag, attribute or element name the companion scripts read. Tenable's [Nessus v2 file format document](https://static.tenable.com/documentation/nessus_v2_file_format.pdf) (2016) shows some of them (for example `HOST_START`, `HOST_END`, `operating-system`, `mac-address`, `netbios-name`, `synopsis`, `see_also` and `exploitability_ease`). Newer fields, such as the threat, CISA and Cisco ones, are not in it. No name here was checked against a real .nessus file. The bucket and value descriptions for the VPR fields come from Tenable's [VPR drivers documentation](https://developer.tenable.com/docs/vpr-drivers), and the exact text written into a .nessus file may differ from it. The **SQL Type** column matches the schema used by the companion [Tenable_Nessus_Scripts](https://github.com/NullSpace-BitCradle/Tenable_Nessus_Scripts) SQL import script.
 
 ### Host Properties
 
@@ -24,7 +24,7 @@ Extracted from `ReportHost > HostProperties > tag[@name]` elements. One set of v
 | **host_ip** | `host-ip` | VARCHAR(200) | Primary IPv4/IPv6 address of the scanned asset. |
 | **mac_address** | `mac-address` | NVARCHAR(MAX) | MAC address(es) discovered for the host. Multiple addresses are comma-separated. |
 | **virtual_mac_address** | `virtual-mac-address` | NVARCHAR(1000) | MAC address of virtual adapter reported by virtualized hosts. |
-| **hostname** | `hostname` | VARCHAR(100) | NetBIOS/short hostname gathered from the host (SMB, SSH, etc.). |
+| **hostname** | `hostname` | VARCHAR(100) | Short hostname gathered from the host (SMB, SSH, etc.). See netbios_name for the NetBIOS name. |
 | **netbios_name** | `netbios-name` | VARCHAR(100) | NetBIOS host name obtained via SMB enumeration. |
 | **host_fqdn** | `host-fqdn` | VARCHAR(150) | Fully-qualified domain name of the target host, if resolved. |
 | **host_rdns** | `host-rdns` | VARCHAR(150) | Reverse DNS lookup result for host_ip. |
@@ -78,7 +78,7 @@ Extracted from child elements within each `ReportItem`. Most are optional and ma
 | **plugin_modification_date** | `plugin_modification_date` | DATE | Date Tenable last modified the plugin in the feed. |
 | **script_version** | `script_version` | VARCHAR(150) | Revision string of the plugin script. |
 | **see_also** | `see_also` | VARCHAR(MAX) | URLs or document references for additional advisories or guides. |
-| **age_of_vuln** | `age_of_vuln` | VARCHAR(100) | Days between original disclosure date and scan time. VPR key driver. |
+| **age_of_vuln** | `age_of_vuln` | VARCHAR(100) | Range of days since the NVD published the vulnerability, as a bucket (Tenable's VPR docs list 0-7, 7-30, 30-60, 60-180, 180-365, 365-730 and more than 730 days). Not an exact day count. VPR key driver. |
 
 #### CVSS v2 Scores
 
@@ -133,25 +133,25 @@ Extracted from child elements within each `ReportItem`. Most are optional and ma
 | Field | XML name | SQL Type | Description |
 |-------|----------|----------|-------------|
 | **exploit_available** | `exploit_available` | VARCHAR(15) | Whether public exploit code is available (true/false). |
-| **exploitability_ease** | `exploitability_ease` | VARCHAR(150) | Qualitative rating: No Known, Theoretical, PoC, Functional, High. |
-| **exploit_code_maturity** | `exploit_code_maturity` | VARCHAR(150) | VPR driver category: Unchecked, PoC, Functional, High. |
+| **exploitability_ease** | `exploitability_ease` | VARCHAR(150) | How easy the issue is to exploit. Tenable's Nessus docs list the values: Exploits are available, No exploit is required, No known exploits are available. |
+| **exploit_code_maturity** | `exploit_code_maturity` | VARCHAR(150) | VPR driver: relative maturity of possible exploit code. Values: High, Functional, PoC, Unproven. |
 | **exploit_framework_canvas** | `exploit_framework_canvas` | VARCHAR(15) | Exploit present in Immunity Canvas (true/false). |
 | **canvas_package** | `canvas_package` | VARCHAR(150) | Name of the Canvas exploit module. |
 | **exploit_framework_core** | `exploit_framework_core` | VARCHAR(15) | Exploit present in Core Impact (true/false). |
 | **exploit_framework_metasploit** | `exploit_framework_metasploit` | VARCHAR(15) | Exploit present in Metasploit Framework (true/false). |
 | **metasploit_name** | `metasploit_name` | VARCHAR(150) | Name of the associated Metasploit module(s). |
 | **exploited_by_malware** | `exploited_by_malware` | VARCHAR(15) | Whether vulnerability is exploited in active malware (true/false). |
-| **exploited_by_nessus** | `exploited_by_nessus` | VARCHAR(15) | Nessus itself can exploit this issue for more info (true/false). |
+| **exploited_by_nessus** | `exploited_by_nessus` | VARCHAR(15) | Whether Nessus can exploit this issue itself (true/false). |
 | **in_the_news** | `in_the_news` | VARCHAR(15) | Tenable threat-intel flag for recent mainstream media coverage (true/false). |
 
 #### Threat Metrics
 
 | Field | XML name | SQL Type | Description |
 |-------|----------|----------|-------------|
-| **threat_recency** | `threat_recency` | VARCHAR(150) | Ordinal bucket of how recently exploits were observed (Very Recent, Recent, etc.). |
-| **threat_intensity_last_28** | `threat_intensity_last_28` | VARCHAR(150) | Aggregate metric (0-100) of exploit activity in last 28 days. |
-| **threat_sources_last_28** | `threat_sources_last_28` | VARCHAR(150) | Count of discrete threat sources (exploit kits, campaigns) in last 28 days. |
-| **product_coverage** | `product_coverage` | VARCHAR(150) | Percentage of vendor-known vulnerable products covered by patches. VPR driver. |
+| **threat_recency** | `threat_recency` | VARCHAR(150) | VPR driver: bucket of days since a threat event was seen (Tenable's VPR docs list 0-7, 7-30, 30-120, 120-365 and more than 365 days). |
+| **threat_intensity_last_28** | `threat_intensity_last_28` | VARCHAR(150) | VPR driver: relative intensity of recently observed threat events, as a bucket: Very Low, Low, Medium, High, Very High. Not a number. |
+| **threat_sources_last_28** | `threat_sources_last_28` | VARCHAR(150) | VPR driver: the sources where threat events were seen in the last 28 days (for example social media or the dark web), as a list. Not a count. |
+| **product_coverage** | `product_coverage` | VARCHAR(150) | VPR driver: relative number of unique products affected by the vulnerability, as a bucket: Low, Medium, High, Very High. Not a percentage. |
 | **unsupported_by_vendor** | `unsupported_by_vendor` | VARCHAR(15) | Product is end-of-life and no longer receives patches (true/false). |
 
 #### Asset and Inventory
@@ -185,7 +185,7 @@ These fields are computed during extraction and do not exist directly in the .ne
 | **severity_rating** | (computed) | VARCHAR(15) | Human-readable severity: Critical, High, Medium, Low, Informational. Computed from raw `severity` attribute. |
 | **severity_reversed** | (computed) | INT | Inverted severity (0=Critical, 4=Informational). Useful for ascending sort by severity. |
 | **scan_date** | (computed) | DATE | Date extracted from `host_start` timestamp (YYYY-MM-DD). |
-| **file_name** | (computed) | VARCHAR(255) | Basename of the source .nessus file. Added during extraction for traceability. |
+| **file_name** | (computed) | VARCHAR(255) | Basename of the source .nessus file. Added during extraction for traceability. Named `file_name` in the CSV and Excel output and `file_path` in the SQL table below (it still holds the basename, not a path). |
 
 ### Additional .nessus Fields (Not Extracted by Scripts)
 
