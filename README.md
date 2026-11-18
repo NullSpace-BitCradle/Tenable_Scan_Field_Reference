@@ -189,7 +189,7 @@ These fields are computed during extraction and do not exist directly in the .ne
 
 ### Additional .nessus Fields (Not Extracted by Scripts)
 
-These fields exist in the .nessus XML format but are not currently extracted by the companion Tenable_Nessus_Scripts. They may appear in specialized scans or extended plugin output.
+The source of this list is not recorded. The companion Tenable_Nessus_Scripts do not extract them, and their element names have not been checked against Tenable's documentation or a real file. They may appear in specialized scans or extended plugin output.
 
 | Field | Description |
 |-------|-------------|
@@ -312,6 +312,14 @@ CREATE TABLE [YourTableName] (
     scan_date DATE
 );
 ```
+
+### Notes on the table
+
+- **Columns:** 106, one per field above except `severity` (the raw value is not stored; `severity_rating` and `severity_reversed` replace it). The table has one `cpe` and one `os_identification` column. Both hold the item-level value, because that is what the companion scripts store; the host-level `cpe` tag is not kept.
+- **Column name:** `file_path` is the SQL name for the `file_name` field, and it holds the file's basename.
+- **No key or index.** One row is one finding on one host in one scan file. If you need a key, (`host_ip`, `pluginID`, `port`, `protocol`, `scan_date`, `file_path`) is a reasonable candidate, but it has not been tested against real scan data.
+- **`synopsis` is VARCHAR(255)** to match the companion script. Tenable does not document a length limit, and I have no scan corpus to measure. If an insert fails with "String or binary data would be truncated", widen it to VARCHAR(MAX).
+- **Provenance:** the field list is what the companion Tenable_Nessus_Scripts extract. It was not derived from a specific Nessus or Tenable version, and it was not checked against a real .nessus file.
 
 ## Data Type Reference
 
